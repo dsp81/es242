@@ -33,6 +33,49 @@ void generate_selections(int a[], int n, int k, int b[], int index1,int index2,v
  * nwords is the number of words in this dictionary.
  */
 /* Write your tests here. Use the previous assignment for reference. */
+void example_process_split(char buf[], void *data) {
+    printf("%s\n", buf);
+}
+
+
+int is_word_in_dictionary(const char *word, const char *dictionary[], int nwords) {
+    for (int i = 0; i < nwords; i++) {
+        if (strcmp(word, dictionary[i]) == 0) {
+            return 1; 
+        }
+    }
+    return 0; 
+}
+
+void generate_splits(const char *source, const char *dictionary[], int nwords, char buf[], void *data, void (*process_split)(char buf[], void *data))
+{
+    
+    if (strlen(source) == 0) {
+        process_split(buf, data);
+        return;
+    }
+
+    for (int i = 1; i <= strlen(source); i++) {
+        char word[100]; 
+        strncpy(word, source, i);
+        word[i] = '\0';
+
+        if (is_word_in_dictionary(word, dictionary, nwords)) {
+            
+            strcat(buf, word);
+            strcat(buf, " "); 
+
+            char remaining[100];
+            strcpy(remaining, source + i);
+
+            
+            generate_splits(remaining, dictionary, nwords, buf, data, process_split);
+
+            
+            buf[strlen(buf) - strlen(word) - 1] = '\0';
+        }
+    }
+}
 
 typedef struct {
     int index;
