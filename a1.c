@@ -76,7 +76,50 @@ void generate_splits(const char *source, const char *dictionary[], int nwords, c
         }
     }
 }
+// qUESTION 3
+void swap(int *l, int *m)
+{
+    int t = *l;
+    *l = *m;
+    *m = t;
+}
 
+int previous_permutation(int a[], int n)
+{
+    int i = n - 2;
+    while (i >= 0 && a[i] <= a[i + 1]) {
+        i--;
+    }
+    
+    if(i<0){
+        return;
+    }
+    
+    int start = i;
+    int end = n-1;
+    while (a[j] >= a[i]) {
+        j--;
+    }
+    
+    // Swap a[i] and a[j]
+    int temp = a[i];
+    a[i] = a[j];
+    a[j] = temp;
+    
+    // Reverse the subarray a[i+1, n-1]
+    int start = i + 1;
+    int end = n - 1;
+    while (start < end) {
+        temp = a[start];
+        a[start] = a[end];
+        a[end] = temp;
+        start++;
+        end--;
+    }
+    
+    // Return 1 to indicate a previous permutation was found.
+    return 1;
+}
 typedef struct {
     int index;
     int err;
@@ -161,54 +204,54 @@ BEGIN_TEST(generate_selections) {
     ASSERT_ARRAY_VALUES_EQ(s.b, 5, "Failed on last of 10C5.", 12, 4, 3, 6, 6);
 } END_TEST
 
-// void test_splits_art(char buf[], void *data)
-// {
-//     state_t *s = (state_t*)data;
-//     if (s->first) {
-//         s->err = 0;
-//         s->first = 0;
-//     }
-//     switch (s->index) {
-//     case 0:
-//         if (strcmp(buf, "art is toil")) {
-//             s->err = 1;
-//         }
-//         break;
-//     case 1:
-//         if (strcmp(buf, "artist oil")) {
-//             s->err = 1;
-//         }
-//         break;
-//     default:
-//         s->err = 1;
-//     }
-//     ++(s->index);
-// }
+void test_splits_art(char buf[], void *data)
+{
+    state_t *s = (state_t*)data;
+    if (s->first) {
+        s->err = 0;
+        s->first = 0;
+    }
+    switch (s->index) {
+    case 0:
+        if (strcmp(buf, "art is toil")) {
+            s->err = 1;
+        }
+        break;
+    case 1:
+        if (strcmp(buf, "artist oil")) {
+            s->err = 1;
+        }
+        break;
+    default:
+        s->err = 1;
+    }
+    ++(s->index);
+}
 
-// BEGIN_TEST(generate_splits) {
-//     const char *a = "artistoil";
-//     const char *dict[] = {
-//         "art",
-//         "artist",
-//         "is",
-//         "oil",
-//         "toil"
-//     };
-//     int nwords = 5;
-//     state_t s = { .index = 0, .err = 1, .first = 1 };
-//     char buf[256];
-//     generate_splits(a, dict, nwords, buf, &s, test_splits_art);
-//     ASSERT(!s.err, "Failed on 'artistoil'.");
-// } END_TEST
+BEGIN_TEST(generate_splits) {
+    const char *a = "artistoil";
+    const char *dict[] = {
+        "art",
+        "artist",
+        "is",
+        "oil",
+        "toil"
+    };
+    int nwords = 5;
+    state_t s = { .index = 0, .err = 1, .first = 1 };
+    char buf[256];
+    generate_splits(a, dict, nwords, buf, &s, test_splits_art);
+    ASSERT(!s.err, "Failed on 'artistoil'.");
+} END_TEST
 
-// BEGIN_TEST(previous_permutation) {
-//     int a[] = { 1, 5, 6, 2, 3, 4 };
-//     previous_permutation(a, 6);
-//     ASSERT_ARRAY_VALUES_EQ(a, 6, "Failed on 1 5 6 2 3 4.", 1, 5, 4, 6, 3, 2);
-//     int aa[] = { 1, 2, 3, 5, 4, 6 };
-//     previous_permutation(aa, 3); // 3 is correct.
-//     ASSERT_ARRAY_VALUES_EQ(aa, 3, "Failed on 1 2 3.", 1, 2, 3);
-// } END_TEST
+BEGIN_TEST(previous_permutation) {
+    int a[] = { 1, 5, 6, 2, 3, 4 };
+    previous_permutation(a, 6);
+    ASSERT_ARRAY_VALUES_EQ(a, 6, "Failed on 1 5 6 2 3 4.", 1, 5, 4, 6, 3, 2);
+    int aa[] = { 1, 2, 3, 5, 4, 6 };
+    previous_permutation(aa, 3); // 3 is correct.
+    ASSERT_ARRAY_VALUES_EQ(aa, 3, "Failed on 1 2 3.", 1, 2, 3);
+} END_TEST
 
 int main()
 {
